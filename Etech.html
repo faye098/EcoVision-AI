@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoVision — Smart AI Waste Classifier</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(255, 255, 255, 0.7);
+      --primary: #2e7d32;
+      --primary-hover: #1b5e20;
+      --text-dark: #1b381e;
+      --text-muted: #4e6e52;
+      --shadow: 0 16px 32px rgba(46, 125, 50, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e8f5e9;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+    p.subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+
+    .webcam-frame {
+      width: 240px;
+      height: 240px;
+      margin: 0 auto 20px;
+      border-radius: 20px;
+      background: #e0f2f1;
+      border: 3px solid #ffffff;
+      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .webcam-frame canvas {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      border-radius: 17px;
+    }
+
+    .placeholder-text { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* Original Class Label Cards */
+    #label-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .label-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      text-align: left;
+    }
+
+    .label-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: #edf7ed;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #81c784, var(--primary));
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.25s ease-out;
+    }
+
+    /* Sector Impact Explanation Box */
+    .impact-box {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 20px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .impact-box h3 { font-size: 0.9rem; color: var(--primary); margin-bottom: 6px; }
+    .impact-box p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+    button {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    button:hover { background: var(--primary-hover); }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <div class="card">
+      <div class="badge">🌱 Eco AI Technology</div>
+      <h1>EcoVision Classifier</h1>
+      <p class="subtitle">Smart Waste Sorting System</p>
+
+      <div class="webcam-frame" id="webcam-container">
+        <span class="placeholder-text" id="placeholder">Click start to activate AI scanner</span>
+      </div>
+
+      <button type="button" id="start-btn" onclick="init()">Start Scanner</button>
+
+      <!-- Original Progress Bar Results Container -->
+      <div id="label-container"></div>
+
+      <!-- Single-Paragraph English Impact Summary -->
+      <div class="impact-box">
+        <h3>🌍 Sector Impact: Waste Management & Recycling</h3>
+        <p>
+          Integrating machine learning image classification into the waste management sector revolutionizes real-time segregation by replacing manual sorting errors with automated precision, significantly diverting recyclable plastics, metals, and organic matter away from overflowing landfills to lower greenhouse gas emissions.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TensorFlow.js & Teachable Machine -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+  <script type="text/javascript">
+    // Replace string with your Teachable Machine model URL
+    const URL = "https://teachablemachine.withgoogle.com/models/N2n3OtY5k/";
+
+    let model, webcam, labelContainer, maxPredictions;
+
+    async function init() {
+      const startBtn = document.getElementById("start-btn");
+      startBtn.innerText = "Loading AI Model...";
+      startBtn.disabled = true;
+
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      // Webcam Setup
+      webcam = new tmImage.Webcam(240, 240, true);
+      await webcam.setup();
+      await webcam.play();
+      window.requestAnimationFrame(loop);
+
+      document.getElementById("placeholder").style.display = "none";
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
+
+      // Create Original Progress Bar Layout
+      labelContainer = document.getElementById("label-container");
+      labelContainer.innerHTML = "";
+      for (let i = 0; i < maxPredictions; i++) {
+        const card = document.createElement("div");
+        card.className = "label-card";
+        card.innerHTML = `
+          <div class="label-header">
+            <span class="class-name">Loading...</span>
+            <span class="class-percentage">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill"></div>
+          </div>
+        `;
+        labelContainer.appendChild(card);
+      }
+
+      startBtn.style.display = "none";
+    }
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      const prediction = await model.predict(webcam.canvas);
+      
+      for (let i = 0; i < maxPredictions; i++) {
+        const percent = (prediction[i].probability * 100).toFixed(0);
+        const card = labelContainer.childNodes[i];
+        
+        card.querySelector(".class-name").innerText = prediction[i].className;
+        card.querySelector(".class-percentage").innerText = `${percent}%`;
+        card.querySelector(".progress-bar-fill").style.width = `${percent}%`;
+      }
+    }
+  </script>
+</body>
+</html>
